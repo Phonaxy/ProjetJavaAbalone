@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abalone</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- Ecran d'accueil -->
+<div id="welcome-screen" class="screen">
+    <div class="welcome-card">
+        <h1>Abalone</h1>
+        <p class="subtitle">Jeu de plateau strategique</p>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button class="tab active" data-tab="tab-play">Jouer</button>
+            <button class="tab" data-tab="tab-players">Joueurs</button>
+            <button class="tab" data-tab="tab-hall">Hall of Fame</button>
+        </div>
+
+        <!-- Tab: Jouer -->
+        <div id="tab-play" class="tab-content active">
+            <div class="form-group">
+                <label>Joueur Noir</label>
+                <select id="select-black"></select>
+            </div>
+            <div class="form-group">
+                <label>Joueur Blanc</label>
+                <select id="select-white"></select>
+            </div>
+            <div class="form-group">
+                <label>Temps par tour (secondes, 0 = illimite)</label>
+                <input type="number" id="time-limit" value="0" min="0">
+            </div>
+            <button id="btn-create-game" class="btn btn-primary">Nouvelle Partie</button>
+
+            <div class="past-games-section">
+                <h3>Parties en cours</h3>
+                <div id="active-games-list" class="games-list"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Gestion des Joueurs -->
+        <div id="tab-players" class="tab-content">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="new-username" placeholder="username unique">
+            </div>
+            <div class="form-group">
+                <label>Nom d'affichage</label>
+                <input type="text" id="new-displayname" placeholder="Nom visible">
+            </div>
+            <button id="btn-add-player" class="btn btn-primary">Ajouter Joueur</button>
+
+            <div id="players-list" class="players-list"></div>
+        </div>
+
+        <!-- Tab: Hall of Fame -->
+        <div id="tab-hall" class="tab-content">
+            <div id="hall-of-fame" class="hall-list"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Ecran de jeu -->
+<div id="game-screen" class="screen hidden">
+    <div class="game-layout">
+
+        <!-- Panneau gauche -->
+        <div class="panel panel-info">
+            <h2>Partie #<span id="game-id">-</span></h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-label">Tour</div>
+                    <div id="current-turn" class="info-value turn-indicator">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Status</div>
+                    <div id="game-status" class="info-value">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Tour #</div>
+                    <div id="turn-number" class="info-value">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Timer</div>
+                    <div id="timer-display" class="info-value">-</div>
+                </div>
+            </div>
+
+            <div class="scores">
+                <div class="score-row">
+                    <span class="marble marble-black-small"></span>
+                    <span id="black-player-name">Noir</span>
+                    <span class="score-badge" id="black-score">0</span>
+                    <span class="score-label">captures</span>
+                </div>
+                <div class="score-row">
+                    <span class="marble marble-white-small"></span>
+                    <span id="white-player-name">Blanc</span>
+                    <span class="score-badge" id="white-score">0</span>
+                    <span class="score-label">captures</span>
+                </div>
+            </div>
+
+            <div class="selection-info">
+                <h3>Selection</h3>
+                <div id="selected-marbles" class="selected-list">Aucune bille selectionnee</div>
+            </div>
+
+            <div class="direction-controls">
+                <h3>Direction</h3>
+                <div class="dir-grid">
+                    <button class="btn-dir" data-dir="UP_LEFT" title="Haut-Gauche">&#8598;</button>
+                    <button class="btn-dir" data-dir="UP_RIGHT" title="Haut-Droite">&#8599;</button>
+                    <button class="btn-dir" data-dir="LEFT" title="Gauche">&#8592;</button>
+                    <button class="btn-dir" data-dir="RIGHT" title="Droite">&#8594;</button>
+                    <button class="btn-dir" data-dir="DOWN_LEFT" title="Bas-Gauche">&#8601;</button>
+                    <button class="btn-dir" data-dir="DOWN_RIGHT" title="Bas-Droite">&#8600;</button>
+                </div>
+            </div>
+
+            <button id="btn-clear" class="btn btn-secondary">Deselectionner</button>
+            <button id="btn-abandon" class="btn btn-danger" style="margin-top:8px">Abandonner</button>
+            <button id="btn-back-menu" class="btn btn-secondary" style="margin-top:8px">Menu</button>
+        </div>
+
+        <!-- Centre : plateau -->
+        <div class="panel panel-board">
+            <div id="board" class="board"></div>
+            <div id="message" class="message"></div>
+        </div>
+
+        <!-- Panneau droit : suivi API -->
+        <div class="panel panel-logs">
+            <div class="logs-header">
+                <h3>Suivi API</h3>
+                <span class="logs-badge" id="logs-count">0</span>
+            </div>
+            <div id="logs-list" class="logs-list"></div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

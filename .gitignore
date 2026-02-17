@@ -1,0 +1,17 @@
+# IDE
+.idea/
+*.iml
+
+# Maven build
+target/
+
+# Maven wrapper jar
+.mvn/wrapper/maven-wrapper.jar
+
+# OS
+.DS_Store
+Thumbs.db
+
+# H2 database files
+*.mv.db
+*.trace.db
