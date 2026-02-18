@@ -47,7 +47,6 @@ com.abalone/
 |   |-- GameController.java          # CRUD parties + jouer
 |   |-- PlayerController.java        # CRUD joueurs
 |   |-- ScoreController.java         # Scores + Hall of Fame
-|   |-- LogController.java           # Suivi des requetes API
 |-- service/
 |   |-- GameService.java             # Logique parties + cycle de vie
 |   |-- PlayerService.java           # Logique joueurs
@@ -69,7 +68,6 @@ com.abalone/
 |       |-- Direction.java           # Les 6 directions hexagonales
 |-- dto/                             # Objets de transfert (requetes/reponses JSON)
 |-- exception/                       # Exceptions metier + handler global
-|-- config/                          # Intercepteur de requetes + config web
 ```
 
 ---
@@ -105,19 +103,16 @@ de creer, lire, modifier et supprimer des joueurs.
 | player_white_id         | BIGINT    | FK vers le joueur blanc                          |
 | winner_id               | BIGINT    | FK vers le joueur gagnant (null si en cours)     |
 | turn_number             | INT       | Numero du tour actuel                            |
-| turn_time_limit_seconds | INT       | Temps max par tour (0 = illimite)                |
-| last_move_at            | TIMESTAMP | Date/heure du dernier coup joue                  |
 | created_at              | TIMESTAMP | Date de creation                                 |
 | finished_at             | TIMESTAMP | Date de fin (null si en cours)                   |
 
 **Pourquoi cette table ?**
 Elle stocke l'etat global d'une partie : qui joue, quel est le score, la partie est-elle finie ?
-Elle reference deux joueurs (FK) et optionnellement un gagnant. Le `turn_time_limit_seconds`
-et `last_move_at` permettent la **validation du temps par tour**.
+Elle reference deux joueurs (FK) et optionnellement un gagnant.
 
 **Cycle de vie d'une partie :**
 ```
-Creation -> IN_PROGRESS -> FINISHED (victoire par 6 ejections ou timeout)
+Creation -> IN_PROGRESS -> FINISHED (victoire par 6 ejections)
                         -> ABANDONED (abandon volontaire)
 ```
 
@@ -217,12 +212,6 @@ game   (1) ---- (2) score (un par joueur a la fin)
 | GET     | `/api/scores/player/{playerId}`  | Scores d'un joueur                 |
 | GET     | `/api/scores/game/{gameId}`      | Scores d'une partie                |
 
-### Suivi des requetes
-
-| Methode | URL            | Description                          |
-|---------|----------------|--------------------------------------|
-| GET     | `/api/logs`    | Liste des requetes API effectuees    |
-
 ---
 
 ## Regles du jeu implementees
@@ -233,9 +222,8 @@ game   (1) ---- (2) score (un par joueur a la fin)
 4. **Poussee (sumito)** : une ligne peut pousser des billes adverses en superiorite numerique (3v2, 3v1, 2v1)
 5. **Ejection** : une bille poussee hors du plateau est definitivement perdue
 6. **Victoire** : le premier joueur a ejecter **6 billes adverses** gagne
-7. **Timeout** : si un joueur depasse son temps par tour, il perd
-8. **Abandon** : un joueur peut abandonner, l'adversaire gagne par forfait
-9. **Tour par tour** : les noirs commencent, puis alternance
+7. **Abandon** : un joueur peut abandonner, l'adversaire gagne par forfait
+8. **Tour par tour** : les noirs commencent, puis alternance
 
 ---
 
@@ -243,11 +231,10 @@ game   (1) ---- (2) score (un par joueur a la fin)
 
 Accessible sur `http://localhost:8080`, le site propose :
 - **Gestion des joueurs** : creer, modifier, supprimer des joueurs
-- **Lancer une partie** : choisir deux joueurs et un temps par tour
+- **Lancer une partie** : choisir deux joueurs
 - **Plateau visuel** : plateau hexagonal avec selection de billes et directions
 - **Abandon** : bouton pour abandonner la partie en cours
 - **Hall of Fame** : classement general des joueurs
-- **Suivi API** : panneau temps reel des requetes HTTP effectuees
 
 ---
 
