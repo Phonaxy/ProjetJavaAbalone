@@ -5,41 +5,12 @@ let selectedMarbles = [];
 let currentColor = null;
 let gameStatus = null;
 let gameData = null;
-let timerInterval = null;
-
-// ========== LOG TRACKER (client-side, instantane) ==========
-const apiLogs = [];
-let logIdCounter = 0;
-
-function addLog(method, url, body, status, duration, response, error) {
-    const now = new Date();
-    const ts = now.toLocaleTimeString('fr-FR', { hour12: false }) + '.' + String(now.getMilliseconds()).padStart(3, '0');
-
-    apiLogs.unshift({
-        id: ++logIdCounter,
-        timestamp: ts,
-        method,
-        url,
-        body: body ? JSON.stringify(body, null, 2) : null,
-        status,
-        duration,
-        response: response ? JSON.stringify(response, null, 2) : null,
-        error: error || null
-    });
-
-    // Garder 200 max
-    if (apiLogs.length > 200) apiLogs.pop();
-
-    renderLogs();
-}
 
 // ========== ELEMENTS ==========
 const welcomeScreen = document.getElementById('welcome-screen');
 const gameScreen = document.getElementById('game-screen');
 const boardEl = document.getElementById('board');
 const messageEl = document.getElementById('message');
-const logsListEl = document.getElementById('logs-list');
-const logsCountEl = document.getElementById('logs-count');
 const selectedMarblesEl = document.getElementById('selected-marbles');
 
 // ========== TABS ==========
@@ -67,45 +38,21 @@ document.querySelectorAll('.btn-dir').forEach(btn => {
     btn.addEventListener('click', () => makeMove(btn.dataset.dir));
 });
 
-// Load initial data
 loadPlayersForSelect();
 loadActiveGames();
 
-// ========== API (avec tracking instantane) ==========
+// ========== API ==========
 async function apiCall(method, url, body) {
     const opts = { method, headers: { 'Content-Type': 'application/json' } };
     if (body) opts.body = JSON.stringify(body);
 
-    const start = performance.now();
-    let res, data, error;
+    const res = await fetch(url, opts);
 
-    try {
-        res = await fetch(url, opts);
-        const duration = Math.round(performance.now() - start);
+    if (res.status === 204) return null;
 
-        if (res.status === 204) {
-            addLog(method, url, body, 204, duration, null, null);
-            return null;
-        }
-
-        data = await res.json();
-
-        if (!res.ok) {
-            addLog(method, url, body, res.status, duration, data, data.message);
-            throw new Error(data.message || 'Erreur API');
-        }
-
-        addLog(method, url, body, res.status, duration, data, null);
-        return data;
-
-    } catch (e) {
-        if (!res) {
-            // Erreur reseau
-            const duration = Math.round(performance.now() - start);
-            addLog(method, url, body, 0, duration, null, e.message);
-        }
-        throw e;
-    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Erreur API');
+    return data;
 }
 
 // ========== PLAYERS CRUD ==========
@@ -242,7 +189,6 @@ async function resumeGame(id) {
         welcomeScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
         await loadBoard();
-        startTimer();
     } catch (e) { alert(e.message); }
 }
 
@@ -250,7 +196,6 @@ async function resumeGame(id) {
 async function createGame() {
     const blackId = document.getElementById('select-black').value;
     const whiteId = document.getElementById('select-white').value;
-    const timeLimit = parseInt(document.getElementById('time-limit').value) || 0;
 
     if (!blackId || !whiteId) { alert('Selectionnez deux joueurs.'); return; }
     if (blackId === whiteId) { alert('Les deux joueurs doivent etre differents.'); return; }
@@ -258,15 +203,13 @@ async function createGame() {
     try {
         const game = await apiCall('POST', '/api/games', {
             playerBlackId: parseInt(blackId),
-            playerWhiteId: parseInt(whiteId),
-            turnTimeLimitSeconds: timeLimit
+            playerWhiteId: parseInt(whiteId)
         });
         gameId = game.id;
         updateGameInfo(game);
         welcomeScreen.classList.add('hidden');
         gameScreen.classList.remove('hidden');
         await loadBoard();
-        startTimer();
         showMessage('Partie creee !', 'info');
     } catch (e) { alert(e.message); }
 }
@@ -389,49 +332,10 @@ function updateGameInfo(game) {
 
     document.getElementById('btn-abandon').style.display =
         game.status === 'IN_PROGRESS' ? 'block' : 'none';
-
-    if (game.status === 'IN_PROGRESS') startTimer();
-    else stopTimer();
-}
-
-// ========== TIMER ==========
-function startTimer() {
-    stopTimer();
-    if (!gameData || gameData.turnTimeLimitSeconds <= 0) {
-        document.getElementById('timer-display').textContent = 'Illimite';
-        return;
-    }
-    updateTimerDisplay();
-    timerInterval = setInterval(updateTimerDisplay, 1000);
-}
-
-function stopTimer() {
-    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-}
-
-function updateTimerDisplay() {
-    if (!gameData || !gameData.lastMoveAt || gameData.turnTimeLimitSeconds <= 0) return;
-    const lastMove = new Date(gameData.lastMoveAt);
-    const now = new Date();
-    const elapsed = Math.floor((now - lastMove) / 1000);
-    const remaining = gameData.turnTimeLimitSeconds - elapsed;
-    const el = document.getElementById('timer-display');
-
-    if (remaining <= 0) {
-        el.textContent = 'TEMPS ECOULE';
-        el.style.color = '#e94560';
-        stopTimer();
-    } else {
-        const min = Math.floor(remaining / 60);
-        const sec = remaining % 60;
-        el.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
-        el.style.color = remaining <= 10 ? '#e94560' : '#e0e0e0';
-    }
 }
 
 // ========== BACK TO MENU ==========
 function backToMenu() {
-    stopTimer();
     welcomeScreen.classList.remove('hidden');
     gameScreen.classList.add('hidden');
     loadPlayersForSelect();
@@ -465,47 +369,4 @@ function showWinner(name) {
         </div>
     `;
     document.body.appendChild(overlay);
-}
-
-// ========== LOGS RENDERING ==========
-function renderLogs() {
-    logsCountEl.textContent = apiLogs.length;
-
-    logsListEl.innerHTML = '';
-    for (const log of apiLogs) {
-        let statusClass = 'status-2xx';
-        if (log.status >= 400 && log.status < 500) statusClass = 'status-4xx';
-        if (log.status >= 500 || log.status === 0) statusClass = 'status-5xx';
-
-        const entry = document.createElement('div');
-        entry.className = `log-entry ${statusClass}`;
-        entry.innerHTML = `
-            <div class="log-top">
-                <span class="log-method ${log.method}">${log.method}</span>
-                <span class="log-url">${esc(log.url)}</span>
-            </div>
-            <div class="log-bottom">
-                <span class="log-status ${log.status < 400 && log.status > 0 ? 'ok' : 'err'}">${log.status || 'ERR'}</span>
-                <span class="log-duration">${log.duration}ms</span>
-                <span class="log-time">${log.timestamp}</span>
-            </div>
-            ${log.body ? `<div class="log-detail log-body-detail hidden"><div class="log-detail-label">Request body</div><pre>${esc(log.body)}</pre></div>` : ''}
-            ${log.response ? `<div class="log-detail log-response-detail hidden"><div class="log-detail-label">Response</div><pre>${esc(truncateJson(log.response))}</pre></div>` : ''}
-            ${log.error ? `<div class="log-detail log-error-detail"><div class="log-detail-label">Erreur</div><pre>${esc(log.error)}</pre></div>` : ''}
-        `;
-
-        // Toggle details on click
-        entry.addEventListener('click', () => {
-            entry.querySelectorAll('.log-body-detail, .log-response-detail').forEach(d => {
-                d.classList.toggle('hidden');
-            });
-        });
-
-        logsListEl.appendChild(entry);
-    }
-}
-
-function truncateJson(json) {
-    if (json.length > 500) return json.substring(0, 500) + '\n... (tronque)';
-    return json;
 }

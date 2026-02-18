@@ -4,7 +4,6 @@ public class CreateGameRequest {
 
     private Long playerBlackId;
     private Long playerWhiteId;
-    private int turnTimeLimitSeconds;
 
     public CreateGameRequest() {}
 
@@ -13,7 +12,4 @@ public class CreateGameRequest {
 
     public Long getPlayerWhiteId() { return playerWhiteId; }
     public void setPlayerWhiteId(Long playerWhiteId) { this.playerWhiteId = playerWhiteId; }
-
-    public int getTurnTimeLimitSeconds() { return turnTimeLimitSeconds; }
-    public void setTurnTimeLimitSeconds(int turnTimeLimitSeconds) { this.turnTimeLimitSeconds = turnTimeLimitSeconds; }
 }

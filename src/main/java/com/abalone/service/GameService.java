@@ -15,7 +15,6 @@ import com.abalone.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,10 +59,6 @@ public class GameService {
         game.setBlackOut(0);
         game.setWhiteOut(0);
         game.setTurnNumber(1);
-        game.setLastMoveAt(LocalDateTime.now());
-
-        int timeLimit = request.getTurnTimeLimitSeconds();
-        game.setTurnTimeLimitSeconds(timeLimit > 0 ? timeLimit : 0); // 0 = pas de limite
 
         game = gameRepository.save(game);
 
@@ -174,26 +169,6 @@ public class GameService {
             throw new InvalidMoveException("La partie est terminee.");
         }
 
-        // Validation du temps
-        if (game.getTurnTimeLimitSeconds() > 0 && game.getLastMoveAt() != null) {
-            long elapsed = Duration.between(game.getLastMoveAt(), LocalDateTime.now()).getSeconds();
-            if (elapsed > game.getTurnTimeLimitSeconds()) {
-                // Temps ecoule : le joueur actif perd par timeout
-                Player loser = getActivePlayer(gameId);
-                Player winner = game.getCurrentColor() == CellState.BLACK
-                        ? game.getPlayerWhite() : game.getPlayerBlack();
-
-                game.setStatus(GameStatus.FINISHED);
-                game.setWinner(winner);
-                game.setFinishedAt(LocalDateTime.now());
-                game = gameRepository.save(game);
-
-                scoreService.calculateAndSaveScores(game, winner);
-
-                throw new InvalidMoveException("Temps ecoule ! " + loser.getDisplayName() + " a perdu par timeout.");
-            }
-        }
-
         CellState currentColor = game.getCurrentColor();
 
         // Valider le mouvement
@@ -240,7 +215,6 @@ public class GameService {
         // Changer de tour
         game.setCurrentColor(currentColor == CellState.BLACK ? CellState.WHITE : CellState.BLACK);
         game.setTurnNumber(game.getTurnNumber() + 1);
-        game.setLastMoveAt(LocalDateTime.now());
 
         return gameRepository.save(game);
     }

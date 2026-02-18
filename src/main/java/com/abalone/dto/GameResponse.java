@@ -11,8 +11,6 @@ public class GameResponse {
     private int blackOut;
     private int whiteOut;
     private int turnNumber;
-    private int turnTimeLimitSeconds;
-    private LocalDateTime lastMoveAt;
     private LocalDateTime createdAt;
     private LocalDateTime finishedAt;
     private PlayerResponse playerBlack;
@@ -27,8 +25,6 @@ public class GameResponse {
         r.setBlackOut(game.getBlackOut());
         r.setWhiteOut(game.getWhiteOut());
         r.setTurnNumber(game.getTurnNumber());
-        r.setTurnTimeLimitSeconds(game.getTurnTimeLimitSeconds());
-        r.setLastMoveAt(game.getLastMoveAt());
         r.setCreatedAt(game.getCreatedAt());
         r.setFinishedAt(game.getFinishedAt());
         if (game.getPlayerBlack() != null) {
@@ -62,12 +58,6 @@ public class GameResponse {
 
     public int getTurnNumber() { return turnNumber; }
     public void setTurnNumber(int turnNumber) { this.turnNumber = turnNumber; }
-
-    public int getTurnTimeLimitSeconds() { return turnTimeLimitSeconds; }
-    public void setTurnTimeLimitSeconds(int turnTimeLimitSeconds) { this.turnTimeLimitSeconds = turnTimeLimitSeconds; }
-
-    public LocalDateTime getLastMoveAt() { return lastMoveAt; }
-    public void setLastMoveAt(LocalDateTime lastMoveAt) { this.lastMoveAt = lastMoveAt; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

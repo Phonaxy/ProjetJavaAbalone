@@ -43,12 +43,6 @@ public class Game {
     @Column(name = "turn_number")
     private int turnNumber;
 
-    @Column(name = "last_move_at")
-    private LocalDateTime lastMoveAt;
-
-    @Column(name = "turn_time_limit_seconds")
-    private int turnTimeLimitSeconds;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -94,12 +88,6 @@ public class Game {
 
     public int getTurnNumber() { return turnNumber; }
     public void setTurnNumber(int turnNumber) { this.turnNumber = turnNumber; }
-
-    public LocalDateTime getLastMoveAt() { return lastMoveAt; }
-    public void setLastMoveAt(LocalDateTime lastMoveAt) { this.lastMoveAt = lastMoveAt; }
-
-    public int getTurnTimeLimitSeconds() { return turnTimeLimitSeconds; }
-    public void setTurnTimeLimitSeconds(int turnTimeLimitSeconds) { this.turnTimeLimitSeconds = turnTimeLimitSeconds; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

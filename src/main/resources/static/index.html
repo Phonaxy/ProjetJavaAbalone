@@ -31,10 +31,6 @@
                 <label>Joueur Blanc</label>
                 <select id="select-white"></select>
             </div>
-            <div class="form-group">
-                <label>Temps par tour (secondes, 0 = illimite)</label>
-                <input type="number" id="time-limit" value="0" min="0">
-            </div>
             <button id="btn-create-game" class="btn btn-primary">Nouvelle Partie</button>
 
             <div class="past-games-section">
@@ -85,10 +81,6 @@
                     <div class="info-label">Tour #</div>
                     <div id="turn-number" class="info-value">-</div>
                 </div>
-                <div class="info-card">
-                    <div class="info-label">Timer</div>
-                    <div id="timer-display" class="info-value">-</div>
-                </div>
             </div>
 
             <div class="scores">
@@ -132,15 +124,6 @@
         <div class="panel panel-board">
             <div id="board" class="board"></div>
             <div id="message" class="message"></div>
-        </div>
-
-        <!-- Panneau droit : suivi API -->
-        <div class="panel panel-logs">
-            <div class="logs-header">
-                <h3>Suivi API</h3>
-                <span class="logs-badge" id="logs-count">0</span>
-            </div>
-            <div id="logs-list" class="logs-list"></div>
         </div>
 
     </div>

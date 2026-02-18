@@ -268,7 +268,7 @@ body {
 /* ========== GAME LAYOUT ========== */
 .game-layout {
     display: grid;
-    grid-template-columns: 260px 1fr 320px;
+    grid-template-columns: 260px 1fr;
     gap: 0;
     height: 100vh;
 }
@@ -289,11 +289,6 @@ body {
     align-items: center;
     justify-content: center;
     background: #1a1a2e;
-}
-
-.panel-logs {
-    background: #0d1b2a;
-    border-left: 1px solid #0f3460;
 }
 
 /* ========== INFO PANEL ========== */
@@ -502,96 +497,6 @@ body {
     border: 1px solid rgba(100, 149, 237, 0.3);
 }
 
-/* ========== LOGS PANEL ========== */
-.logs-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-
-.logs-header h3 {
-    font-size: 0.9rem;
-    color: #e94560;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.logs-badge {
-    background: #e94560;
-    color: white;
-    border-radius: 12px;
-    padding: 2px 10px;
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-.logs-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: calc(100vh - 80px);
-    overflow-y: auto;
-}
-
-.log-entry {
-    background: #1a1a2e;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 0.8rem;
-    transition: background 0.2s;
-    border-left: 3px solid transparent;
-    cursor: pointer;
-}
-
-.log-entry:hover { background: #16213e; }
-.log-entry.status-2xx { border-left-color: #50c878; }
-.log-entry.status-4xx { border-left-color: #e94560; }
-.log-entry.status-5xx { border-left-color: #ff6b6b; }
-
-.log-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-
-.log-method {
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-weight: 700;
-}
-
-.log-method.GET { background: rgba(100, 149, 237, 0.2); color: #6495ed; }
-.log-method.POST { background: rgba(80, 200, 120, 0.2); color: #50c878; }
-.log-method.PUT { background: rgba(255, 165, 0, 0.2); color: #ffa500; }
-.log-method.DELETE { background: rgba(233, 69, 96, 0.2); color: #e94560; }
-
-.log-url {
-    color: #aaa;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.75rem;
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.log-bottom {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #555;
-    font-size: 0.7rem;
-}
-
-.log-status { font-weight: 600; }
-.log-status.ok { color: #50c878; }
-.log-status.err { color: #e94560; }
-.log-time { color: #444; }
-.log-duration { color: #666; }
-
 /* ========== WINNER OVERLAY ========== */
 .winner-overlay {
     position: fixed;
@@ -614,42 +519,6 @@ body {
 
 .winner-card h2 { font-size: 2rem; color: #e94560; margin-bottom: 12px; }
 .winner-card p { color: #aaa; margin-bottom: 24px; }
-
-/* ========== LOG DETAILS (expandable) ========== */
-.log-detail {
-    margin-top: 8px;
-    padding: 8px;
-    background: #0d1b2a;
-    border-radius: 6px;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.7rem;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.log-detail pre {
-    white-space: pre-wrap;
-    word-break: break-all;
-    color: #8ab4f8;
-    margin: 0;
-}
-
-.log-detail-label {
-    font-size: 0.6rem;
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.log-error-detail pre {
-    color: #e94560;
-}
-
-.log-entry .log-detail.hidden {
-    display: none;
-}
 
 /* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar { width: 6px; }
